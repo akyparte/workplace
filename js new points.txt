@@ -1,0 +1,609 @@
+1)  how function gets declared when inside of for loop without  'use strict';
+      function test() {
+                  // this   gl    gets declared with undefined value
+              console.log(gl);  // prints undefined
+
+              for(let i = 0; i < 2;i++){
+                          function gl(params) {
+                                  console.log('hello');
+                          }
+              }
+               gl();   // prints hello
+                        // because code inside for loop was dynamic as it gets executed on after condition is true;
+      }
+          test();
+=======================================================================================================================================          
+
+1.1)  how function gets declared when inside of for loop with 'use strict';
+
+      function test() {
+                'use strict';
+                 // reference error gl is not defined
+                 console.log(gl);
+
+               for(let i = 0; i < 2;i++){
+                          function gl(params) {
+                                  console.log('hello');
+                          }
+               }
+
+               gl();    //   reference error  gl not defined
+
+      }
+      test();
+=======================================================================================================================================      
+
+2) how to use closuers to create private properties for objects
+            function private() {
+                   let   _age = 0;
+
+                  return {
+                        get age(){
+                              return _age;
+                        },
+                        set age(v){
+                                 if(v < 18){
+                                       console.log('you are under age');
+                                 }else {
+                                       _age = v;
+                                }
+                        }
+                  }
+            }
+        let obj = private();    
+        obj.age = 15  //  you are under age 
+                                 // and value wont change
+
+let obj = private();
+
+obj.age = 16;
+
+=======================================================================================================================================
+3) does array functions have arguments property in brower
+       
+            let fun = (params) => {
+                    console.log(arguments);
+            }
+           fun();   // reference error arguments is not defined
+=======================================================================================================================================  
+3.1) does array functions have arguments property in node
+       
+            let fun = (   ) => {
+                    console.log(arguments);
+            }
+           fun();    // arguments points to the global objects arguments
+=======================================================================================================================================
+3.2) anonymous functions does have an arguments property
+        let fun  =  function (  ) {
+              console.log(  arguments );
+        } 
+        fun( ) //  it prints srguments object
+=======================================================================================================================================
+4)  custom interator 
+         let obj1 = {name:'akshay',age:21};
+
+            obj1[Symbol.iterator] = function() {
+                     let i = 0;
+                     let self = this;
+                     let keys = Object.keys(this);
+
+                     return {
+                             next(){
+                                    if(i === keys.length){
+                                           return {value:undefined,done:true}
+                                     }else {
+                                           return {value:self[keys[i++]],done:false}
+                                     }
+                           }
+                    }
+          }
+
+            console.log(...obj1);   //  akshay  21 
+=======================================================================================================================================
+5) operator workings 
+
+    5.1>  let obj1 = {valueOf(){return 1}};
+            console.log( obj1 == true);   // true
+                 process
+                          i>     obj1  ==   1;    // true got corced to 1 
+                          ii>    1   ==   1    //  valueOf got called while coarcing  ( via to primitive operation )
+                         iii>   atlast expression results in  true;
+
+=======================================================================================================================================
+6) return statement function does not get hoisted , because return statement is an executable code
+
+       function go(num){
+            console.log(gg);
+
+            return function gg(){
+                   
+            }
+       }
+
+go();  // reference error gg is not defied
+
+
+=======================================================================================================================================
+7) count function which uses closure to keep track of start variable 
+
+
+    function getCounter(start) {
+         return function(reset) {
+             // if you send 'reset' it will make start = 0;
+             // see with the help f close we have access to lexical property start
+             // and we are even able to modity that property
+              if(reset) start = 0;
+
+              // while returning result, we return value of lexical variable start and also increment it
+              // and as long as we have referece to count function, closure will stay alive
+              return start++;
+        }
+    }
+    let count = getCounter(0);
+    setInterval(() => {
+       console.log(count());
+    }, 1000);
+
+=======================================================================================================================================
+8) how typeof works with ( not declared variables ) and (declared variables);
+
+    console.log(typeof abc);   //  undefined
+
+    var xyz;
+
+    console.log(typeof xyz);  // undefined
+=======================================================================================================================================
+8.1) typeof with let keyword, when try to use inside temporal dead zone
+
+   function() {
+         typeof name;  // reference error , can not access before initialization
+
+         let name = 'akshay';
+   }
+=======================================================================================================================================
+8.2) how let variable gets undefined at the declaration
+
+  function test(){
+     // console.log(foo);  // referece error of TDZ
+     let foo;
+     console.log(foo);  // undefined 
+  }
+
+  // because (let foo;) changes to (let foo = undefined;)
+  // as you know once value is assigned to let variable it comes out of TDZ
+  // here js implicitly provided it undefined at the declaration line
+
+=======================================================================================================================================
+9) lexical environment works with block scope also
+
+    var a = 2;
+    {
+         let a = 3;
+         console.log( a ); // 3
+         // when js engine look for a, it finds a is declared inside this current block
+         // so it uses it and prints on the console
+    }
+    console.log( a ); // 2
+    // here js engine looks for a , then it finds a is declared inside this current function's scope
+    // so uses it and prints on the console;
+
+
+
+=======================================================================================================================================
+9.1) same code with var inside {} block scope 
+
+    var a = 2;
+    {
+         // here we redeclared the [ a ] which is defined out of this block
+         // with value 3
+         var a = 3;
+         console.log( a ); // 3
+         // when js engine look for a, it finds a is declared inside this current function, because var has function scope
+         // so it uses it and prints on the console
+
+    }
+    console.log( a ); // 3
+
+
+
+=======================================================================================================================================    
+10) different ways to loop through javascript objects
+
+   i> Object.keys()  // it returns an array of properties of an object 
+                     // it does not return inherited properties 
+                  
+  ii> forInLoop
+                   // it loop through only enumerable properties of that object 
+                   // it also return inherited properties, if are enumerable 
+         for(let prop in obj){
+              console.log(prop);
+         }
+
+ iii> Object.getOwnPropertyNames()       
+
+        // is a static method that will lists all enumerable and non-enumerable properties of the object that you pass it.
+
+ link -> https://www.fullstack.cafe/interview-questions/javascript question-14
+
+=========================================================================================================================================
+11) Useful number methods
+
+     <i> Number.isInteger
+             Number.isInteger( 42 ); // true
+             Number.isInteger( 42.000 ); // true
+             Number.isInteger( 42.3 ); // false
+
+=========================================================================================================================================
+12) Difference between global isNaN and Number.isNaN
+
+      <i>  global isNaN();
+
+             isNaN('ajhcjvc')   // returns true 
+                                // because the value you have passed is not a number to it return true
+
+      <ii>  Number.isNaN()
+
+             Number.isNaN('ddv')  // returns false
+                                  // it needs exact NaN to return true
+
+             Number.isNaN(NaN)  // returns true
+
+=========================================================================================================================================
+13) how to get infinity and -0 in js
+
+     i> when we divide any num with 0 we get infinity
+
+            ( 4 / 0 )  // Inifinity
+            ( -4 / 0)  // -Inifinity
+
+      ii> when we divide 0 with any num we get 0
+           
+           var x = 0 / 8;   //    0
+           var a = 0 / -3;  //   -0
+           var b = 0 * -3;  //   -0
+            
+14) isNegative function
+
+    function isNegZero(n) {
+        n = Number( n );
+        return (n === 0) && (1 / n === -Infinity);
+    }
+
+    // first we check if given value is 0 or not
+    // then we check if 1/n results in -Inifinity or not
+    // if both conditions are true , means n is a -0
+
+15) when you want to do absolute comparision
+
+      Object.is(NaN,NaN)  // returns true;
+      Object.is(-0,0)  // return false;
+      
+    IMP -> we should use them for comparision where == , === can't work   
+
+
+16) 
+
+  i> Create a function that can take N number of arguments
+  ii> Now make some logic print the largest,smallest and average number from that array
+
+
+17) 
+
+  i> create a function that can produce given numbers table
+
+     eg.  5 X 1 = 5
+          5 X 2 = 10
+          so on...
+
+18)           
+
+  Symbol.toString tag usage
+
+  let obj = {
+        [Symbol.toStringTag]:'MYOBJ'
+  }
+
+    console.log(obj.toString());  //  [object MYOBJ];
+
+
+19) create code that can tell if value is NaN or not
+
+    let val = NaN;
+
+    val !== val // true;
+
+    / because NaN is never equal to NaN
+
+
+20) how to create a Dynamic function
+ 
+  let fun = new Function( "a", "return a * 2;" );
+
+  fun(2) // 4;
+
+21) how to make syntax error dynamically
+
+     // create function with this ways
+    let fun = new Function( "a", "name++" );
+
+    // now while compilling error wont come in catch
+    // so when you run your file syntax error will be thrown
+
+
+22) when Symbol.toStringTag and toString() method is used
+
+    eg-1)------------------------------------------
+    obj = {
+          [Symbol.toStringTag]:'MYOBJ',
+
+          toString(){
+                return 'OBJ'
+          }
+    }
+
+    console.log(obj+'');  //  obj
+    //  because toString method is defined 
+
+    eg-2)---------------------------------------------
+     obj = {
+          [Symbol.toStringTag]:'MYOBJ',
+
+    }
+
+    console.log(obj+'');  //  [object MYOBJ]
+
+
+
+23) what happens when you stringify array
+
+   let arr = ['hello',22, function(){}]
+
+     console.log(arr);  // ['hello',22,null]
+
+  let obj = {
+        name:'akshay',
+        fun(){
+
+        }
+  }
+
+  console.log(JSON.stringify(obj));
+     // obj without fun property it will be removed
+
+24) Do you know how ! operator works
+
+  > it negligates the result
+    let num = 5;
+    !num  //   false
+    // condition says -> if num is not true it will return true
+
+    step1-> num coerced to true so it fliped to false
+
+
+25) would you be able to delete that property
+
+    var employee = {
+       company: 'xyz'
+    }
+    
+    var Emp1 = Object.create(employee);
+
+    delete Emp1.company Console.log(emp1.company); 
+
+    ans -> 'xyz'
+
+    1> you are not allowed to delete property from your prorotype chain
+       but you are allowed to access it
+
+    (reference)-> https://www.edureka.co/blog/interview-questions/javascript-interview-questions/#advanced 
+                  Q- 47   
+
+26) would you be able to change the value of that inherited property
+
+    var employee = {
+       company: 'xyz'
+    }
+    
+    var emp1 = Object.create(employee);
+
+    emp1.company = '666'
+    Console.log(emp1.company); 
+
+    ans - 666
+
+    1) you have not changed that value but created company property on your emp1 object
+       because you are not allowed to change the property values of your prototypes
+
+    (how Object.create works ?) -> this method creates a new object by setting its prorotype to given object   
+
+
+27) how to create a private property for object with the help of closuers and getters/setters
+
+     
+     function privateObj() {
+         let _name;
+
+         return {
+            get name(){
+                return _name;
+            },
+            set name(val){
+                if(val.length > 5) {
+                    _name = val;
+                }
+            }
+         }
+     }
+
+     let obj = privateObj();
+     obj.name = 'hhjjjjjj';
+     obj.name = 'hu'
+     console.log(obj.name);  
+
+
+28) how variables are created accidentaly
+
+      (function() {
+          var a = b = 5;
+      })();
+
+      console.log(a);  // reference error a is not defined
+      console.log(b);  // 5;
+
+   explanation -> 
+        1> when you dont define any variable and assign it any value
+           so js create that variable globally and assigns it the given value   
+
+
+29) try to guess the output of this keyword example
+
+   var myObject = { 
+     foo: "bar", 
+     func: function() { 
+         var self = this; 
+         console.log("outer func: this.foo = " + this.foo);
+          console.log("outer func: self.foo = " + self.foo);
+          
+          (function() { 
+              console.log("inner func: this.foo = " + this.foo);
+               console.log("inner func: self.foo = " + self.foo);
+          }());
+
+          let arrowFun = () => {
+               console.log(this.foo);
+          }  
+
+          arrowFun();
+            
+     } 
+     
+     }; 
+     
+    myObject.func();
+
+
+30) tru to guess the output of coersion
+
+    console.log(1 + "2" + "2"); 
+    console.log(1 + +"2" + "2");
+    console.log(1 + -"1" + "2"); 
+    console.log(+"1" + "1" + "2");
+    console.log( "A" - "B" + "2"); 
+    console.log( "A" - "B" + 2);
+
+   (reference)-> https://www.toptal.com/javascript/interview-questions
+
+
+31.1) javascript operator precedence example
+       console.log("0 || 1 = "+(0 || 1)); 
+       console.log("1 || 2 = "+(1 || 2)); 
+       console.log("0 && 1 = "+(0 && 1)); 
+       console.log("1 && 2 = "+(1 && 2));
+
+       (referece) -> https://www.toptal.com/javascript/interview-questions
+
+
+32.2) javascript operator precedence example
+
+     console.log("1 && 2 = "+(1 && 2)); //  '1 && 2 = 2'
+
+     console.log("1 && 2 = "+1 && 2);   // 2
+
+     reason -> 
+             1> because + operator has higher precedence than && operator so expression got resolved into  
+              
+              "1 && 2 = 1"  &&  2    // && operator got both sides to work 
+
+              result => 2
+
+
+33) corecion examples
+
+   console.log(false == '0');   // true
+   console.log(false === '0')   // false
+
+    eg1 -> 
+         step1 >  0 == '0'
+         step2 >  0 == 0
+         result >  true
+
+34) how object key works
+
+   var a={}, b={key:'b'}, c={key:'c'}; 
+
+   a[b]=123; a[c]=456; 
+
+   console.log(a[b]);  // 456
+
+   reason ->
+      1> object expects string as a key , so if you pass anything else it will corce it to string
+        a) for objects toPrimitive abstract operation is followed
+        b) for primitive values ToString abstract operation is followed
+
+35) how inheritence can be done within functions
+    
+      function test() {
+    
+      }
+
+      test.fun = function(params) {
+         console.log('hello');
+      }
+
+      function test2() {
+    
+      }
+
+      test2.__proto__ = test;
+
+      console.log(test2.fun);
+
+
+36) try to guess the output
+
+    (function test() { 
+
+        use();
+    
+        var value = 20;
+   
+        function use() {
+           console.log(value);
+        }
+
+})();
+
+
+
+   reference -> https://www.toptal.com/javascript/interview-questions
+
+
+35) can we use template as a object key ?
+
+      let obj = {
+            `age`:21
+      }
+      // throws error
+
+      let obj = {
+            [`age`]:21
+      }
+      // works fine
+      // now key becomes dynamic because template is allowed
+
+      // same while accessing property
+
+      obj[`anyProp`] = 21;  // allowed
+
+
+
+     
+ --------------------------------------------links--------------------------------------------------------------------
+
+ https://www.fullstack.cafe/blog/javascript-code-interview-questions
+
+
+
+  
+
+    
