@@ -450,3 +450,75 @@
 
 // console.log(longestNonrepeatingSubstring('abddefgh'));
 
+
+
+function join(arr) {
+    let joinedString = '';
+    
+
+    while(arr.length){
+         if(joinedString.length > 0){
+             let str1 = joinedString;
+             let str2 = arr.shift();
+
+             let matchedIndex = 0;
+             let minimimLength = Number.MAX_VALUE;
+             for(let i = 0;i <= str2.length;i++){
+                if(str1.endsWith(str2.substring(0,i+1))){
+                    matchedIndex = i+1;
+                    if(matchedIndex < minimimLength){
+                        minimimLength = matchedIndex;
+                    }
+                }
+             }  
+            if(matchedIndex > 0){
+                
+                joinedString = str1.concat(str2.substring(matchedIndex))
+                console.log(joinedString);
+            }else {
+                joinedString = str1.concat(str2.substring(matchedIndex))
+                let result = [];
+                for(let i = 0;i < joinedString.length;i++){
+                    if(!result.includes(joinedString.charAt(i))) result.push(joinedString.charAt(i));
+                }
+
+                joinedString = result.join('');
+                console.log(joinedString);
+
+            }
+           
+
+         }else {
+             joinedString = arr.shift();
+         }
+    }
+
+
+
+    console.log(joinedString);
+    // console.log(minimimLength);
+
+    
+}
+join(["to", "ops", "psy", "syllable"])
+
+// let str1 = 'oven';
+
+// let str2 = 'envier';
+
+
+// let matchedIndex = null;
+// let minimimLength = 0;
+
+// for(let i = 0;i <= str2.length;i++){
+//      if(str1.endsWith(str2.substring(0,i+1))){
+//          matchedIndex = i+1;
+//          if(matchedIndex < minimimLength){
+//              minimimLength = matchedIndex;
+//          }
+//      }
+// }
+
+// let modified = str1.concat(str2.substring(matchedIndex+1))
+
+// console.log(modified);
